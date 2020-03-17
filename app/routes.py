@@ -108,8 +108,8 @@ def student():
             print(item5)
 
         classes=request.form.get('classes')
-        # courses=testMessage #hardcoded cos firebase does not work
-        return render_template('schedule.html', tupleList=tupleList)
+
+        return render_template('schedule.html', tupleList=tupleList, classes=classes)
 
     return render_template('student.html')
 

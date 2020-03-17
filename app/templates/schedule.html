@@ -180,6 +180,10 @@
                 var newline1 = document.createElement('br');
                 pre.appendChild(newline1);              
 
+                var c = 0;
+                var numPreferredClasses = '{{classes}}';
+                console.log(numPreferredClasses);
+
                 {% for class in tupleList %}
                     var a = document.createElement('a');
                     var tempStartTime = '{{class[0].startTime}}'.toString();
@@ -223,6 +227,69 @@
                     
                     a.appendChild(classLink);
                     a.href = "javascript:void(0)";
+                    
+                    if(c < numPreferredClasses) { 
+                        a.style = "color:red"; 
+
+                        var tempStartTime = '{{class[0].startTime}}'.toString();
+                        var tempEndTime = '{{class[0].endTime}}'.toString();
+                        var tempDayList = '';
+                        var firstDay = 100;
+                        if('{{class[0].meetsOnMonday}}' == 'True') { 
+                            tempDayList = tempDayList.concat("MO,"); 
+                            if(firstDay == 100) { firstDay = 0; }
+                        }
+                        if('{{class[0].meetsOnTuesday}}' == 'True') { 
+                            tempDayList = tempDayList.concat("TU,"); 
+                            if(firstDay == 100) { firstDay = 1; }
+                        }
+                        if('{{class[0].meetsOnWednesday}}' == 'True') { 
+                            tempDayList = tempDayList.concat("WE,"); 
+                            if(firstDay == 100) { firstDay = 2; }
+                        }
+                        if('{{class[0].meetsOnThursday}}' == 'True') { 
+                            tempDayList = tempDayList.concat("TH,"); 
+                            if(firstDay == 100) { firstDay = 3; }
+                        }
+                        if('{{class[0].meetsOnFriday}}' == 'True') { 
+                            tempDayList = tempDayList.concat("FR,"); 
+                            if(firstDay == 100) { firstDay = 4; }
+                        }
+                        tempDayList = tempDayList.substring(0,tempDayList.length-1);
+
+                        var startWeekDate = 16;
+                        startEventDate = "2020-03-" + (startWeekDate + firstDay).toString();
+                        
+                        gapi.client.calendar.events.insert({
+                            "calendarId": response.result.id,
+                            "resource": {
+                                "summary": '{{class[0].courseName}}' + ' ' + 
+                                    '{{class[0].classType}}' + ' section ' + 
+                                    '{{class[0].sectionNum}}',
+                                "start": {
+                                    "dateTime": startEventDate + "T" +
+                                        tempStartTime.substring(0,tempStartTime.length-2) + ':' + 
+                                        tempStartTime.substring(tempStartTime.length-2,tempStartTime.length) + ':00',
+                                    "timeZone": "America/Los_Angeles"
+                                },
+                                "end": {
+                                    "dateTime": startEventDate + "T" + 
+                                        tempEndTime.substring(0,tempEndTime.length-2) + ':' + 
+                                        tempEndTime.substring(tempEndTime.length-2,tempEndTime.length) + ':00',
+                                    "timeZone": "America/Los_Angeles"
+                                },
+                                "recurrence": [
+                                    "RRULE:FREQ=WEEKLY;UNTIL=20200320T220000Z;BYDAY=" + tempDayList
+                                ]
+                            }
+                        })
+                        .then(function(response) {
+                            embedCalendars();
+                        });
+
+                        c = c + 1;
+                    } 
+
                     a.onclick = function() {
                         var tempStartTime = '{{class[0].startTime}}'.toString();
                         var tempEndTime = '{{class[0].endTime}}'.toString();
