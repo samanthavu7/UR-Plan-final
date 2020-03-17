@@ -1,121 +1,116 @@
 #Function that adds documents to Firebase collection
-class Class(object):
-    def __init__(self, courseName, classType, sectionNum, CRN, startTime, endTime, days,
-                classLoc, seatsOpen, seatsActual, creditAmt, prof,isUpperDiv, quarterOffered, preReqClasses=[], preReqFor=[], fulfillsReq=[]):
-        self.courseName = courseName
-        self.classType = classType
-        self.sectionNum = sectionNum
-        self.CRN = CRN
-        self.startTime = startTime
-        self.endTime = endTime
-        self.days = days
-        self.classLoc = classLoc
-        self.seatsOpen = seatsOpen
-        self.seatsActual = seatsActual
-        self.creditAmt = creditAmt
-        self.prof = prof
-        self.isUpperDiv = isUpperDiv
-        self.quarterOffered = quarterOffered
-        self.preReqClasses = preReqClasses
-        self.preReqFor = preReqFor
-        self.fulfillsReq = fulfillsReq
 
-    @staticmethod
-    def from_dict(source):
-        
-        c = Class(source[u'courseName'], source[u'classType'], source[u'sectionNum'], source[u'CRN'], source[u'startTime'],
-                 source[u'endTime'], source[u'days'], source[u'classLoc'], source[u'seatsOpen'], source[u'seatsActual'], source[u'creditAmt'],
-                 source[u'prof'], source[u'isUpperDiv'], source[u'quarterOffered'], source[u'preReqClasses'], source[u'preReqFor'], source[u'fulfillsReq'])
-        return c
-        
+#To make this work, make sure to have already run testFireBaseInit.py,
+#or copy/paste all contents of that file after this file's 'from' statements
+#Also, make sure URPlanClasses.py and designProjectScratch.py are in the 
+#same project directory where you'll run this.
 
-    def to_dict(self):
-        
-        dest = {
-            u'courseName': self.courseName,
-            u'classType': self.classType,
-            u'sectionNum': self.sectionNum,
-            u'CRN': self.CRN,
-            u'startTime': self.startTime,
-            u'endTime': self.endTime,
-            u'days': self.days,
-            u'classLoc': self.classLoc,
-            u'seatsOpen': self.seatsOpen,
-            u'seatsActual': self.seatsActual,
-            u'creditAmt': self.creditAmt,
-            u'prof': self.prof,
-            u'isUpperDiv': self.isUpperDiv,
-            u'quarterOffered': self.quarterOffered,
-            u'preReqClasses': self.preReqClasses,
-            u'preReqFor': self.preReqFor,
-            u'fulfillsReq': self.fulfillsReq
-        }
-        return dest
-        
+# from URPlanClasses import Student
+# from URPlanClasses import Class
 
-    def __repr__(self):
-        return(u'Class(courseName={}, classType={}, sectionNum={}, CRN={}, startTime={}, endTime={}, days={}, classLoc={}, seatsOpen={}, seatsActual={}, creditAmt={}, prof={}, isUpperDiv={}, quarterOffered={}, preReqClasses={}, preReqFor={}, fulfillsReq={})'
-               .format(self.courseName, self.classType, self.sectionNum, self.CRN, self.startTime, self.endTime, self.days,
-                      self.classLoc, self.seatsOpen, self.seatsActual, self.creditAmt, self.prof, self.isUpperDiv, 
-                      self.quarterOffered, self.preReqClasses, self.preReqFor, self.fulfillsReq))
+# from designProjectScratch import ClassInfo
+# from designProjectScratch import initCSCoreClass
+# from designProjectScratch import initCSNonCoreClasses
 
-class Student(object):
-    def __init__(self, firstName, lastName, major, year=0, prefClassesLimit=4, prefStartTime=8000, prefEndTime=2200, prefDays="MTWRF", coursesList=[]):
-        #algorithm for class selection can first compare a student class's preferences against
-        #default values. When a particular value is different from default, only then will it
-        #be used as an element in a query to classes database.  
-        self.firstName = firstName
-        self.lastName = lastName
-        self.major = major
-        self.year = year
-        self.prefClassesLimit = prefClassesLimit #default is 4 class limit
-        self.prefStartTime = prefStartTime
-        self.prefEndTime = prefEndTime
-        self.prefDays = prefDays
-        self.coursesList = coursesList
+#doc_refStudent = db.collection(u'students').document(u'864651254')
+#doc_refClass = db.collection(u'classes').document(u'53095') #Currently example query set to CS014 class. 
 
-    @staticmethod
-    def from_dict(source):
-        
-        s = Student(source[u'firstName'], source[u'lastName'], source[u'major'], source[u'year'], source[u'prefClassesLimit'], source[u'prefStartTime'], source[u'prefEndTime'],
-                    source[u'prefDays'], source[u'coursesList'])
-        return s
-        
 
-    def to_dict(self):
-        
-        dest = {
-            u'firstName': self.firstName,
-            u'lastName': self.lastName,
-            u'major': self.major,
-            u'year': self.year,
-            u'prefClassesLimit': self.prefClassesLimit,
-            u'prefStartTime': self.prefStartTime,
-            u'prefEndTime': self.prefEndTime,
-            u'prefDays': self.prefDays,
-            u'coursesList': self.coursesList
-        }
-        return dest
-        
+#try:
+#    docStudent = doc_refStudent.get()
+#    studentQuery = Student.from_dict(docStudent.to_dict())
+#    print(studentQuery)
+#except google.cloud.exceptions.NotFound:
+#    print("Student Document Not Found")
 
-    def __repr__(self):
-        return(u'Student(firstName={}, lastName={}, major={}, year={}, prefClassesLimit={}, prefStartTime={}, prefEndTime={}, prefDays={}, coursesList={})'
-               .format(self.firstName, self.lastName, self.major, 
-                       self.year, self.prefClassesLimit, self.prefStartTime, self.prefEndTime, self.prefDays, self.coursesList))
+#try:
+#    docClass = doc_refClass.get()
+#    classQuery = Class.from_dict(docClass.to_dict())
+#    print(classQuery)
+#except google.cloud.exceptions.NotFound:
+#    print("Document Not Found")
 
-doc_refStudent = db.collection(u'students').document(u'864651254')
-doc_refClass = db.collection(u'classes').document(u'53095') #Currently example query set to CS014 class.
+def updateClassesToTake(studentList, classListing):
+    for selClass in studentList:
+        for classObj in classListing[:]:
+            if(selClass == classObj.className):
+                classListing.remove(classObj)
 
-try:
-    docStudent = doc_refStudent.get()
-    studentQuery = Student.from_dict(docStudent.to_dict())
-    print(studentQuery)
-except google.cloud.exceptions.NotFound:
-    print("Student Document Not Found")
+    for selClass in studentList:
+        for classObj in classListing[:]:
+            if(selClass in classObj.preReqtoTake):
+                classObj.preReqtoTake.remove(selClass)
+    return classListing
 
-try:
-    docClass = doc_refClass.get()
-    classQuery = Class.from_dict(docClass.to_dict())
-    print(classQuery)
-except google.cloud.exceptions.NotFound:
-    print("Document Not Found")
+# doc_refStudent = db.collection(u'students').document(u'864651254')
+
+# try:
+#     docStudent = doc_refStudent.get()
+#     studentQuery = Student.from_dict(docStudent.to_dict())
+#     print(studentQuery)
+# except google.cloud.exceptions.NotFound:
+#     print("Student Document Not Found")
+
+# studentList = studentQuery.coursesList[:]
+
+# coreClasses = initCSCoreClass()
+# nonCoreClasses = initCSNonCoreClasses()
+
+# classesToQuery = []
+
+# coreClasses = updateClassesToTake(studentList, coreClasses)
+# nonCoreClasses = updateClassesToTake(studentList, nonCoreClasses)
+
+#for selClass in studentList:
+#    for classObj in coreClasses[:]:
+#        if(selClass == classObj.className):
+#            coreClasses.remove(classObj)
+
+#for selClass in studentList:
+#    for classObj in nonCoreClasses[:]:
+#        if(selClass == classObj.className):
+#            nonCoreClasses.remove(classObj)
+
+#for selClass in studentList:
+#    for classObj in coreClasses[:]:
+#        if(selClass in classObj.preReqtoTake):
+#            classObj.preReqtoTake.remove(selClass)
+
+#for selClass2 in studentList:
+#    for classObj2 in nonCoreClasses[:]:
+#        if(selClass2 in classObj2.preReqtoTake):
+#            classObj2.preReqtoTake.remove(selClass2)
+
+# print("Core classes that you can take after classes removal: ")
+# for classObj in coreClasses:
+#     if(not classObj.preReqtoTake):
+#         print(classObj.className + " can now be taken!")
+#         classesToQuery.append(classObj.className)
+
+# print("Classes in nonCore that can be taken")
+
+# for classObj2 in nonCoreClasses:
+#     if(not classObj2.preReqtoTake):
+#         print(classObj2.className + " can now be taken!")
+#         classesToQuery.append(classObj2.className)
+
+
+#Querying is done here.
+
+# classes_Ref = db.collection(u'classes')
+# queryQueue = []
+# for classItem in classesToQuery:
+#     queryQueue.append(classes_Ref.where(u'courseName', u'==', classItem).where(u'classType', u'==', u'LEC'))
+
+# listOfClasses = []
+# for queryItem in queryQueue:
+#     try:
+#         docs = queryItem.stream()
+#         for doc in docs:
+#             listOfClasses.append(Class.from_dict(doc.to_dict()))
+#     except google.cloud.exceptions.NotFound:
+#         print("Doc not found")
+
+# print("Results (in Class object form)")
+# for item in listOfClasses:
+#     print(item)

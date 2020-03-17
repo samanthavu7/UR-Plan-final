@@ -39,35 +39,32 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closePreferencesNav()">&times;</a>
         <p-big>Preferences</p-big><br>
         
-        <p>Days</p>
-        <form>
-            <input type="checkbox" id="monday" name="monday" value="M">
+        <form method="POST" action="/student">
+            <p>Days</p>
+            <input type="checkbox" name="days" value="Monday">
             <label for="monday">Monday</label><br>
-            <input type="checkbox" id="tuesday" name="tuesday" value="T">
+            <input type="checkbox" name="days" value="Tuesday">
             <label for="tuesday">Tuesday</label><br>
-            <input type="checkbox" id="wednesday" name="wednesday" value="W">
+            <input type="checkbox" name="days" value="Wednesday">
             <label for="wednesday">Wednesday</label><br>
-            <input type="checkbox" id="thursday" name="thursday" value="R">
+            <input type="checkbox" name="days" value="Thursday">
             <label for="thursday">Thursday</label><br>
-            <input type="checkbox" id="friday" name="friday" value="F">
+            <input type="checkbox" name="days" value="Friday">
             <label for="friday">Friday</label><br>
-        </form> 
-        
-        <p>Time</p>
-        <form> 
-            <label for="startTime">Starting Time: </label>
-            <input type="time" id="startTime" value="07:00"><br>
-            <label for="endTime">Ending Time: </label>
-            <input type="time" id="endTime" value="22:00"><br>
-        </form>
-        
-        <p>Number of Classes</p>
-        <form> <!--action="/action_page.php"-->
+            
+            <p>Time</p>
+            <label for="startTime">Starting Time: </label><br>
+            <input type="time" name="time" value="07:00"><br>
+            <label for="endTime">Ending Time: </label><br>
+            <input type="time" name="time" value="22:00"><br>
+            
+            <p>Number of Classes</p>
             <label for="quantity">Quantity: </label>
-            <input type="number" id="quantity" name="quantity" min="1" max="5" value="4"><br><br><br>
+            <input type="number" id="quantity" name="classes" min="1" max="5" value="4"><br><br><br>
+        
+            <input type="submit" value="Generate my Term Plan!">
+    
         </form>
-
-        <input type="submit" onclick="createCalendar()" value="Generate my Term Plan!">
     </div>
 
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
@@ -109,7 +106,7 @@
                 var pre = document.getElementById('welcome');
                 var textContent = document.createTextNode('Welcome ' + gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getName() + '!\n');
                 pre.prepend(textContent);
-                
+
                 embedCalendars();
             } else {
                 //do nothing for now.
@@ -118,7 +115,7 @@
 
         function handleSignOut(event) {
             gapi.auth2.getAuthInstance().signOut();
-            location.assign("index");
+            location.assign("/");
         }
     
     </script>
@@ -186,7 +183,7 @@
                 pre.appendChild(newline2);                
 
                 var a = document.createElement('a');
-                var classLink = document.createTextNode("CS 141 Lecture T,R 13:00-14:30PM");
+                var classLink = document.createTextNode("Click me");
                 a.appendChild(classLink);
                 a.href = "javascript:void(0)";
                 a.onclick = function() {
