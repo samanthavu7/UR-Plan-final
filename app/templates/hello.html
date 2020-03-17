@@ -1,0 +1,23 @@
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}
+Login
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='login.css')}}" />
+<div class="container" style="top: 50;">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+            <form method="POST" action="/">
+                <img src="../static/UCR-icon.png" width="72" height="72" style="display: block; margin: 0 auto; top: 50;">
+                <dl>
+                {{ wtf.quick_form(form)}}
+                <input class="btn btn-lg btn-primary btn-block" type="submit" value="Login">
+                </dl>
+            </form>
+        </div>
+    <div class="col-lg-4"></div>
+</div>
+{% endblock %}
